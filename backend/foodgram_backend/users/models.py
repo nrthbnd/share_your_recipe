@@ -12,6 +12,7 @@ class User(AbstractUser):
     ]
 
     username = models.CharField(
+        'Username',
         max_length=150,
         unique=True,
         validators=[],
@@ -32,6 +33,7 @@ class User(AbstractUser):
         blank=True,
     )
     role = models.CharField(
+        'Роль',
         max_length=250,
         blank=True,
         default=USER,
