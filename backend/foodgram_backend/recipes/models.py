@@ -11,13 +11,11 @@ class Ingredients(models.Model):
         'Название ингредиента',
         max_length=256,
         unique=True,
-        # verbose_name='Название ингредиента',
         help_text='Название ингредиента',
     )
     unit = models.CharField(
         'Единица измерения',
         max_length=100,
-        # verbose_name='Единица измерения',
         help_text='Единица измерения ингредиента',
     )
 
@@ -41,14 +39,12 @@ class Tags(models.Model):
     name = models.CharField(
         'Название тега',
         max_length=256,
-        # verbose_name='Название тега',
         help_text='Название тега рецепта',
     )
     slug = models.SlugField(
         'Слаг тега',
         max_length=100,
         unique=True,
-        # verbose_name='Слаг тега',
         help_text='Слаг тега',
     )
     color = models.CharField(
@@ -72,7 +68,6 @@ class Recipes(models.Model):
         'Название рецепта',
         max_length=256,
         # unique=True,
-        # verbose_name='Название рецепта',
         help_text='Название рецепта',
     )
     text = models.TextField(
