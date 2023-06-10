@@ -2,6 +2,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
+
 from .validators import HEX_VALIDATOR
 
 
@@ -13,14 +14,14 @@ class Ingredients(models.Model):
         unique=True,
         help_text='Название ингредиента',
     )
-    unit = models.CharField(
+    measurement_unit = models.CharField(
         'Единица измерения',
         max_length=100,
         help_text='Единица измерения ингредиента',
     )
 
     def __str__(self) -> str:
-        return f'{self.name} ({self.unit})'
+        return f'{self.name} ({self.measurement_unit})'
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -28,7 +29,7 @@ class Ingredients(models.Model):
         ordering = ['name']
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'unit'],
+                fields=['name', 'measurement_unit'],
                 name='unique_unit',
             )
         ]
@@ -83,7 +84,6 @@ class Recipes(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления блюда в минутах',
-        # verbose_name='Время приготовления блюда в минутах',
         validators=[MinValueValidator(
             1, 'Время приготовления не может быть менее 1 минуты.')
         ],
