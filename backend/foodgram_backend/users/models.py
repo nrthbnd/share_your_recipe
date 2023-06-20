@@ -15,11 +15,13 @@ class User(AbstractUser):
         'Username',
         max_length=150,
         unique=True,
+        blank=True,
         validators=[],
     )
     email = models.EmailField(
         'Почта',
         unique=True,
+        blank=False,
         max_length=254
     )
     first_name = models.CharField(
@@ -37,6 +39,11 @@ class User(AbstractUser):
         max_length=250,
         blank=True,
         default=USER,
+    )
+    is_subscribed = models.BooleanField(
+        'Подписка на автора',
+        default=False,
+        help_text='Подписка на автора',
     )
 
     class Meta:
