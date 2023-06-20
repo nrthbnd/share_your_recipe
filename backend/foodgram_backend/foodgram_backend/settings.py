@@ -19,15 +19,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Приложения
+
     'api.apps.ApiConfig',
     'recipes.apps.RecipesConfig',
     'users.apps.UsersConfig',
-    # Аутентификация
+
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    # Сериализация
+
     'django_filters',
 ]
 
@@ -125,16 +125,23 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
+    # 'DEFAULT_PAGINATION_CLASS':
+    # 'PAGE_SIZE'
+
 }
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user_create': 'api.serializers.CustomUserCreateSerializer',
-        'user': 'api.serializers.CustomUserSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer',
+        'user_create': 'users.serializers.CustomUserCreateSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
     },
     'HIDE_USERS': False,
+    'USER_ID_FIELD': 'id',
+    # 'LOGIN_VIEW': 'api/auth/token/login',
+    # 'LOGOUT_VIEW': 'api/auth/token/logout',
+    # 'PERMISSIONS':
 }
