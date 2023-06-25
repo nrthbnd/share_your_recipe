@@ -10,4 +10,3 @@ class RecipesPagination(PageNumberPagination):
     page_query_description = 'Номер страницы.'
     page_size_query_description = (
         'Количество объектов на странице (по умолчанию 6).')
-    max_page_size = 18
