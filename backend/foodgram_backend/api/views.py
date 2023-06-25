@@ -1,17 +1,17 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, viewsets, status
+from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import Favorites, Ingredients, Recipes, ShoppingList, Tags
+from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import Favorites, Ingredients, Recipes, ShoppingList, Tags
 from .filters import IngredientsFilter
 from .pagination import RecipesPagination
-from .serializers import (RecipesWriteSerializer, RecipesReadSerializer,
-                          RecipesMajorSerializer, TagsSerializer,
-                          IngredientsSerializer,)
+from .serializers import (IngredientsSerializer, RecipesMajorSerializer,
+                          RecipesReadSerializer, RecipesWriteSerializer,
+                          TagsSerializer)
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -25,8 +25,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Выбор сериализатора для рецептов в зависимости от метода."""
-        if self.action in SAFE_METHODS:
         # if self.request.method == 'GET':
+        if self.action in SAFE_METHODS:
             return RecipesReadSerializer
         return RecipesWriteSerializer
 
