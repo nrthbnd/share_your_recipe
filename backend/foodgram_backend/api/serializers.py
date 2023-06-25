@@ -73,7 +73,7 @@ class RecipesReadSerializer(serializers.ModelSerializer):
             user_id=user, recipe_id=recipe).exists()
         # user = self.context.get('request').user
         # if user.is_anonymous:
-            # return False
+        # return False
         # return user.favorites.filter(recipe=obj).exists()
 
     def get_ingredients(self, obj):
@@ -95,7 +95,7 @@ class RecipesReadSerializer(serializers.ModelSerializer):
             user_id=user, recipe_id=recipe).exists()
         # user = self.context.get('request').user
         # if user.is_anonymous:
-            # return False
+        # return False
         # return user.shopping_list.filter(recipe=obj).exists()
 
 
