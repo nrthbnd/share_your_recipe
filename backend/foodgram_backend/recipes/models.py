@@ -1,6 +1,5 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-
 from users.models import User
 
 from .validators import HEX_VALIDATOR
@@ -40,6 +39,7 @@ class Tags(models.Model):
     name = models.CharField(
         'Название тега',
         max_length=256,
+        unique=True,
         help_text='Название тега рецепта',
     )
     slug = models.SlugField(
@@ -67,8 +67,8 @@ class Recipes(models.Model):
     """Модель рецептов."""
     name = models.CharField(
         'Название рецепта',
-        max_length=256,
-        # unique=True,
+        max_length=200,
+        unique=True,
         help_text='Название рецепта',
     )
     text = models.TextField(

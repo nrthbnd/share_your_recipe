@@ -6,7 +6,7 @@ from .models import Ingredients, Recipes, ShoppingList, Tags
 
 class RecipesIngredientsInline(admin.TabularInline):
     model = Recipes.ingredients.through
-    fields = ('amount',)
+    fields = ('amount', 'ingredients')
 
 
 @admin.register(Ingredients)
