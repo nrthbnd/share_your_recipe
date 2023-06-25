@@ -1,6 +1,5 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework.fields import SerializerMethodField
-
 from users.models import Follow, User
 
 
@@ -21,6 +20,7 @@ class CustomUserSerializer(UserSerializer):
         model = User
         fields = ('username', 'email', 'id', 'first_name',
                   'last_name', 'is_subscribed',)
+        read_only_fields = ('is_subscribed',)
 
     def get_subscription(self, obj):
         """Возвращает True/False о подписке на автора рецепта
