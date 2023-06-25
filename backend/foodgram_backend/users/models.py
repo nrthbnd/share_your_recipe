@@ -22,7 +22,7 @@ class User(AbstractUser):
         'Почта',
         unique=True,
         blank=False,
-        max_length=254
+        max_length=254,
     )
     first_name = models.CharField(
         'Имя',
