@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from .filters import IngredientsFilter, RecipesFilter
 from .pagination import RecipesPagination
-from .permissions import IsAuthorOrReadOnly
+from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientsSerializer, RecipesMajorSerializer,
                           RecipesReadSerializer, RecipesWriteSerializer,
                           TagsSerializer)
@@ -19,14 +19,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
     """Список рецептов."""
     queryset = Recipes.objects.all()
     pagination_class = RecipesPagination
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipesFilter
-    # search_fields = ('author',)
 
     def get_serializer_class(self):
         """Выбор сериализатора для рецептов в зависимости от метода."""
-        # if self.request.method == 'GET':
         if self.action in SAFE_METHODS:
             return RecipesReadSerializer
         return RecipesWriteSerializer
