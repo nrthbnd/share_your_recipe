@@ -71,10 +71,6 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         recipe = obj.id
         return Favorites.objects.filter(
             user_id=user, recipe_id=recipe).exists()
-        # user = self.context.get('request').user
-        # if user.is_anonymous:
-        # return False
-        # return user.favorites.filter(recipe=obj).exists()
 
     def get_ingredients(self, obj):
         """Получает значения полей из модели Ингридиентов
@@ -93,10 +89,6 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         recipe = obj.id
         return ShoppingList.objects.filter(
             user_id=user, recipe_id=recipe).exists()
-        # user = self.context.get('request').user
-        # if user.is_anonymous:
-        # return False
-        # return user.shopping_list.filter(recipe=obj).exists()
 
 
 class RecipesWriteSerializer(serializers.ModelSerializer):
