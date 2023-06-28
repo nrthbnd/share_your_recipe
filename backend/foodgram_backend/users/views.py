@@ -68,12 +68,8 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         if request.method == 'GET':
             user = request.user
             user_subscriptions = Follow.objects.filter(user=user)
-            # authors = [user_sub.author.pk for user_sub in user_subscriptions]
-            # authors_queryset = User.objects.filter(pk__in=authors)
-            # page = self.paginate_queryset(authors_queryset)
             page = self.paginate_queryset(user_subscriptions)
             serializer = FollowSerializer(page, many=True,
                                           context={'request': request})
-            # serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
