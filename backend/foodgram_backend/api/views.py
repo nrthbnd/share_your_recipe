@@ -37,7 +37,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         """Изменение рецепта полностью."""
         serializer.save(author=self.request.user, partial=False)
 
-    @action(detail=True, methods=['post', 'get'],
+    @action(detail=True, methods=['post', 'delete'],
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk=None):
         """Проверяет, добавлен ли рецепт в избранное
@@ -46,11 +46,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipes, pk=pk)
 
         if self.request.method == 'POST':
-            if Favorites.objects.filter(recipe=recipe, user=user).exists():
+            if Favorites.objects.filter(recipe_id=recipe, user=user).exists():
                 raise exceptions.ValidationError(
                     'Рецепт уже добавлен в избранное!'
                 )
-            Favorites.objects.create(recipe=recipe, user=user)
+            Favorites.objects.create(recipe_id=recipe, user=user)
             serializer = RecipesMajorSerializer(
                 recipe,
                 context={'request': request}
@@ -58,17 +58,22 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if self.request.method == 'DELETE':
-            if not Favorites.objects.filter(recipe=recipe, user=user).exists():
+            if not Favorites.objects.filter(
+                recipe_id=recipe,
+                user=user
+            ).exists():
                 raise exceptions.ValidationError(
                     'Рецепта нет в избранном!'
                 )
-            favorites = get_object_or_404(Favorites, recipe=recipe, user=user)
+            favorites = get_object_or_404(Favorites,
+                                          recipe_id=recipe,
+                                          user=user)
             favorites.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @action(detail=True, methods=['post', 'get'],
+    @action(detail=True, methods=['post', 'delete'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk=None):
         """Проверяет, добавлен ли рецепт в список покупок
@@ -77,11 +82,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipes, pk=pk)
 
         if self.request.method == 'POST':
-            if ShoppingList.objects.filter(recipe=recipe, user=user).exists():
+            if ShoppingList.objects.filter(
+                recipe_id=recipe,
+                user=user
+            ).exists():
                 raise exceptions.ValidationError(
                     'Рецепт уже добавлен в избранное!'
                 )
-            ShoppingList.objects.create(recipe=recipe, user=user)
+            ShoppingList.objects.create(recipe_id=recipe, user=user)
             serializer = RecipesMajorSerializer(
                 recipe,
                 context={'request': request}
@@ -90,7 +98,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
         if self.request.method == 'DELETE':
             if not ShoppingList.objects.filter(
-                recipe=recipe,
+                recipe_id=recipe,
                 user=user
             ).exists():
 
@@ -98,7 +106,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                     'Рецепта нет в списке покупок!'
                 )
             in_shopping_cart = get_object_or_404(
-                ShoppingList, recipe=recipe, user=user,
+                ShoppingList, recipe_id=recipe, user=user,
             )
             in_shopping_cart.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

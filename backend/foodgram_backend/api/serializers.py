@@ -67,10 +67,10 @@ class RecipesReadSerializer(serializers.ModelSerializer):
     def get_favorited(self, obj):
         """Возвращает True/False об Избранном для пользователя,
         отправляющего запрос."""
-        user = self.context['request'].user.id
+        user = self.context['request'].user
         recipe = obj.id
         return Favorites.objects.filter(
-            user_id=user, recipe_id=recipe).exists()
+            user=user, recipe_id=recipe).exists()
 
     def get_ingredients(self, obj):
         """Получает значения полей из модели Ингридиентов
@@ -88,7 +88,7 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         recipe = obj.id
         return ShoppingList.objects.filter(
-            user_id=user, recipe_id=recipe).exists()
+            user=user, recipe_id=recipe).exists()
 
 
 class RecipesWriteSerializer(serializers.ModelSerializer):
