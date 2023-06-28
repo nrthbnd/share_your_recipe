@@ -1,4 +1,3 @@
-# from api.serializers import RecipesMajorSerializer
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from recipes.models import Recipes
 from rest_framework import serializers
@@ -75,7 +74,6 @@ class FollowSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         recipes = Recipes.objects.filter(author=obj)
         recipes_limit = request.GET.get('recipes_limit')
-        # request.GET содержит все параметры строки запроса, перед. с пом. GET
         if recipes_limit:
             recipes = recipes[:int(recipes_limit)]
         serializer = self.get_major_serialiser()(
