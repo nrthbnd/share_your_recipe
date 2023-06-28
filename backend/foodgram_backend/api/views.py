@@ -8,7 +8,7 @@ from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import IngredientsFilter, RecipesFilter
-from .pagination import RecipesPagination
+from .pagination import PageLimitPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientsSerializer, RecipesMajorSerializer,
                           RecipesReadSerializer, RecipesWriteSerializer,
@@ -18,7 +18,7 @@ from .serializers import (IngredientsSerializer, RecipesMajorSerializer,
 class RecipesViewSet(viewsets.ModelViewSet):
     """Список рецептов."""
     queryset = Recipes.objects.all()
-    pagination_class = RecipesPagination
+    pagination_class = PageLimitPagination
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipesFilter
@@ -32,6 +32,10 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Сохранение рецепта с автором."""
         serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        """Изменение рецепта полностью."""
+        serializer.save(author=self.request.user, partial=False)
 
     @action(detail=True, methods=['post', 'get'],
             permission_classes=(IsAuthenticated,))
@@ -106,7 +110,7 @@ class IngredientsViewSet(viewsets.ModelViewSet):
     """Список ингредиентов."""
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
-    # permission_classes = (,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = IngredientsFilter
     search_fields = ('name',)
@@ -122,3 +126,4 @@ class TagsViewSet(viewsets.ModelViewSet):
 class RecipesInCartViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesMajorSerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
