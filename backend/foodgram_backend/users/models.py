@@ -15,8 +15,8 @@ class User(AbstractUser):
         'Username',
         max_length=150,
         unique=True,
-        blank=True,
-        validators=[],
+        blank=False,
+        # validators=[],
     )
     email = models.EmailField(
         'Почта',
@@ -27,17 +27,17 @@ class User(AbstractUser):
     first_name = models.CharField(
         'Имя',
         max_length=150,
-        blank=True,
+        blank=False,
     )
     last_name = models.CharField(
         'Фамилия',
         max_length=150,
-        blank=True,
+        blank=False,
     )
     role = models.CharField(
         'Роль',
         max_length=250,
-        blank=True,
+        blank=False,
         default=USER,
     )
     is_subscribed = models.BooleanField(
@@ -49,12 +49,6 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['username', 'email'],
-                name='unique_together',
-            )
-        ]
 
     @property
     def is_admin(self):
@@ -82,6 +76,7 @@ class Follow(models.Model):
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+        ordering = ('-pk',)
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'user'],
