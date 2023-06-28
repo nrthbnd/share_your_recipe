@@ -16,7 +16,6 @@ class User(AbstractUser):
         max_length=150,
         unique=True,
         blank=False,
-        # validators=[],
     )
     email = models.EmailField(
         'Почта',
