@@ -143,7 +143,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 'attachment; filename="shopping_list.txt"')
 
             for name, amount in shopping_list.items():
-                response.write(f"{name}: {amount}\n")
+                response.write(f'{name}: {amount}\n')
 
         return response
 
