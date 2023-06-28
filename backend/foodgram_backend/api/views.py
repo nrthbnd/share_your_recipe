@@ -1,10 +1,11 @@
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import Favorites, Ingredients, Recipes, ShoppingList, Tags
+from recipes.models import Favorites, Ingredients, Recipes, ShoppingList, Tags, RecipesIngredients
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import SAFE_METHODS  # IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
 from .filters import IngredientsFilter, RecipesFilter
@@ -113,11 +114,38 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @action(detail=True, methods=['post', 'delete'],
-            permission_classes=(IsAuthorOrAdminOrReadOnly,))
-    def download_shopping_cart(self, request,):
+    @action(detail=False, methods=['get', ],
+            permission_classes=(IsAuthorOrAdminOrReadOnly,),
+            url_path='download_shopping_cart')
+    def download_shopping_cart(self, request):
         """Скачивает файл с суммированым перечнем и количеством
         необходимых ингредиентов."""
+        user = request.user
+        products = ShoppingList.objects.filter(user=user)
+        shopping_list = {}
+
+        for product in products:
+            ingredients = RecipesIngredients.objects.filter(
+                recipe_id=product.recipe_id)
+
+            for ingredient in ingredients:
+                item = Ingredients.objects.get(pk=ingredient.ingredient_id)
+                product_name = (
+                    f'{item.name} ({item.measurement_unit})')
+
+                if product_name in shopping_list.keys():
+                    shopping_list[product_name] += ingredient.amount
+                else:
+                    shopping_list[product_name] = ingredient.amount
+
+            response = HttpResponse(content_type='text/plain')
+            response['Content-Disposition'] = (
+                'attachment; filename="shopping_list.txt"')
+
+            for name, amount in shopping_list.items():
+                response.write(f"{name}: {amount}\n")
+
+        return response
 
 
 class IngredientsViewSet(viewsets.ModelViewSet):
