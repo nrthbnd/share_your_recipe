@@ -120,7 +120,6 @@ class TagsViewSet(viewsets.ModelViewSet):
     """Список тегов длфя рецептов."""
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
-    # permission_classes = (,)
 
 
 class RecipesInCartViewSet(viewsets.ModelViewSet):
