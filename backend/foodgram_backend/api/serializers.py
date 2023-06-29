@@ -121,7 +121,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         if not value:
             raise exceptions.ValidationError(
                 'Необходимо добавить тег.')
-        return value           
+        return value
 
     def create(self, validated_data):
         """Создает рецепт и добавляет в связанные модели рецептов
