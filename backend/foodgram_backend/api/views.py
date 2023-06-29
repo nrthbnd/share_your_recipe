@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from utils.utils import create_shopping_list_file
 from recipes.models import (Favorites, Ingredients, Recipes,
-                            ShoppingList, Tags, RecipesIngredients)
+                            ShoppingList, Tags)
 from .filters import IngredientsFilter, RecipesFilter
 from .pagination import PageLimitPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
