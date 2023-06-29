@@ -111,10 +111,9 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
                 'Необходимо добавить ингридиент.')
 
         ingredients = [ingredient['id'] for ingredient in value]
-        for item in ingredients:
-            if ingredients.count(item) > 1:
-                raise exceptions.ValidationError(
-                    'Этот ингредиент уже добавлен в рецепт.')
+        if len(ingredients) != set(len(ingredients)):
+            raise exceptions.ValidationError(
+                'Этот ингредиент уже добавлен в рецепт.')
         return value
 
     def validate_tags(self, value):
