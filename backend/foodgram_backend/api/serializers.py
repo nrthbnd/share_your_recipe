@@ -3,10 +3,11 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from recipes.models import (Favorites, Ingredients, Recipes,
-                            RecipesIngredients, ShoppingList, Tags)
 from rest_framework import exceptions, serializers
 from rest_framework.fields import SerializerMethodField
+
+from recipes.models import (Favorites, Ingredients, Recipes,
+                            RecipesIngredients, ShoppingList, Tags)
 from users.serializers import CustomUserSerializer
 
 
