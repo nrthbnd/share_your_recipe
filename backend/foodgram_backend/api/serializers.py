@@ -135,8 +135,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
             ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
             amount=ingredient['amount'],
             recipe_id=recipe,
-            ) for ingredient in ingredients]
-        )
+        ) for ingredient in ingredients])
 
         return recipe
 
