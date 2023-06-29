@@ -1,11 +1,12 @@
-from api.pagination import PageLimitPagination
-from api.permissions import IsAuthorOrAdminOrReadOnly
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from api.pagination import PageLimitPagination
+from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import Follow, User
 from users.serializers import CustomUserCreateSerializer, FollowSerializer
 
