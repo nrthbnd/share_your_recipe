@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from users.models import User
 
+from users.models import User
 from .validators import HEX_VALIDATOR
 
 
@@ -10,7 +10,6 @@ class Ingredients(models.Model):
     name = models.CharField(
         'Название ингредиента',
         max_length=256,
-        unique=True,
         help_text='Название ингредиента',
     )
     measurement_unit = models.CharField(
@@ -145,8 +144,8 @@ class RecipesIngredients(models.Model):
         return f'{self.recipe_id} ({self.ingredient_id}) - {self.amount}.'
 
     class Meta:
-        verbose_name = 'Ингридиент в рецепте'
-        verbose_name_plural = 'Ингридиенты в рецепте'
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
 
 
 class RecipesTags(models.Model):

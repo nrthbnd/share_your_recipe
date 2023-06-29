@@ -3,10 +3,11 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from recipes.models import (Favorites, Ingredients, Recipes,
-                            RecipesIngredients, ShoppingList, Tags)
 from rest_framework import exceptions, serializers
 from rest_framework.fields import SerializerMethodField
+
+from recipes.models import (Favorites, Ingredients, Recipes,
+                            RecipesIngredients, ShoppingList, Tags)
 from users.serializers import CustomUserSerializer
 
 
@@ -68,12 +69,11 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         """Возвращает True/False об Избранном для пользователя,
         отправляющего запрос."""
         user = self.context['request'].user
-        recipe = obj.id
         return Favorites.objects.filter(
-            user=user, recipe_id=recipe).exists()
+            user=user, recipe_id=obj.id).exists()
 
     def get_ingredients(self, obj):
-        """Получает значения полей из модели Ингридиентов
+        """Получает значения полей из модели Ингредиентов
         и значение amount из общей таблицы RecipesIngredients."""
         recipe = obj
         ingredients = recipe.ingredients.values(
@@ -111,10 +111,9 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
                 'Необходимо добавить ингридиент.')
 
         ingredients = [ingredient['id'] for ingredient in value]
-        for item in ingredients:
-            if ingredients.count(item) > 1:
-                raise exceptions.ValidationError(
-                    'Этот ингредиент уже добавлен в рецепт.')
+        if len(ingredients) != len(set(ingredients)):
+            raise exceptions.ValidationError(
+                'Этот ингредиент уже добавлен в рецепт.')
         return value
 
     def validate_tags(self, value):
@@ -132,14 +131,12 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         recipe = Recipes.objects.create(**validated_data)
         recipe.tags.set(tags)
 
-        for ingredient in ingredients:
-            amount = ingredient['amount']
-            ingredient = get_object_or_404(Ingredients, pk=ingredient['id'])
-
-            RecipesIngredients.objects.create(
-                ingredient_id=ingredient,
-                amount=amount,
-                recipe_id=recipe)
+        RecipesIngredients.objects.bulk_create([RecipesIngredients(
+            ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
+            amount=ingredient['amount'],
+            recipe_id=recipe,
+            ) for ingredient in ingredients]
+        )
 
         return recipe
 
