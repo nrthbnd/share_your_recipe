@@ -145,8 +145,8 @@ class RecipesIngredients(models.Model):
         return f'{self.recipe_id} ({self.ingredient_id}) - {self.amount}.'
 
     class Meta:
-        verbose_name = 'Ингридиент в рецепте'
-        verbose_name_plural = 'Ингридиенты в рецепте'
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
 
 
 class RecipesTags(models.Model):
