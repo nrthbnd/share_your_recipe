@@ -2,7 +2,7 @@ from api.pagination import PageLimitPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import exceptions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -25,12 +25,6 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(User, id=id)
 
         if request.method == 'POST':
-            if user == author:
-                raise exceptions.ValidationError(
-                    'На себя подписаться нельзя.')
-            if Follow.objects.filter(user=user, author=author).exists():
-                raise exceptions.ValidationError(
-                    'Вы уже подписаны на данного автора.')
             serializer = FollowSerializer(
                 author,
                 request.data,
@@ -41,10 +35,6 @@ class CustomUserViewSet(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if self.request.method == 'DELETE':
-            if not Follow.objects.filter(user=user, author=author).exists():
-                raise exceptions.ValidationError(
-                    'Вы уже отписались от данного автора или '
-                    'не были подписаны на него.')
             subscription = get_object_or_404(Follow, user=user, author=author)
             subscription.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
