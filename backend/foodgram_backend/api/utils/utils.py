@@ -14,10 +14,10 @@ def create_shopping_list_file(user):
     recipes_list = [product.recipe_id for product in products]
 
     shopping_list = RecipesIngredients.objects.filter(
-        recipe_id__in=recipes_list).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(total_amount=Sum('amount'))
+        recipe_id__in=recipes_list
+        ).values('ingredient__name',
+                 'ingredient__measurement_unit'
+                 ).annotate(total_amount=Sum('amount'))
 
     content = 'Ваш список покупок:\n\n'
     for item in shopping_list:
