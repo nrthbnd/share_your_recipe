@@ -50,11 +50,25 @@ class FollowSerializer(serializers.ModelSerializer):
                   'is_subscribed', 'recipes', 'recipes_count')
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
-    def validate_following(self, value):
-        if self.context['request'].user == value:
-            raise serializers.ValidationError(
-                'На себя подписаться нельзя.')
-        return value
+    def validate(self, data):
+        author = self.instance
+        user = self.context['request'].user
+        method = self.context['request'].method
+        if method == 'POST':
+            if user == author:
+                raise serializers.ValidationError(
+                    'На себя подписаться нельзя.')
+
+            if Follow.objects.filter(user=user, author=author).exists():
+                raise serializers.ValidationError(
+                    'Вы уже подписаны на данного автора.')
+
+        if method == 'DELETE':
+            if not Follow.objects.filter(user=user, author=author).exists():
+                raise serializers.ValidationError(
+                    'Вы уже отписались от данного автора или '
+                    'не были подписаны на него.')
+        return data
 
     def get_major_serialiser(self):
         """Решение проблемы перекрестного импорта с сериализатором из апи."""
