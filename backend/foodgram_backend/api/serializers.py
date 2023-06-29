@@ -69,12 +69,11 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         """Возвращает True/False об Избранном для пользователя,
         отправляющего запрос."""
         user = self.context['request'].user
-        recipe = obj.id
         return Favorites.objects.filter(
-            user=user, recipe_id=recipe).exists()
+            user=user, recipe_id=obj.id).exists()
 
     def get_ingredients(self, obj):
-        """Получает значения полей из модели Ингридиентов
+        """Получает значения полей из модели Ингредиентов
         и значение amount из общей таблицы RecipesIngredients."""
         recipe = obj
         ingredients = recipe.ingredients.values(
@@ -123,7 +122,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         if not value:
             raise exceptions.ValidationError(
                 'Необходимо добавить тег.')
-        return value
+        return value           
 
     def create(self, validated_data):
         """Создает рецепт и добавляет в связанные модели рецептов
@@ -133,14 +132,12 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         recipe = Recipes.objects.create(**validated_data)
         recipe.tags.set(tags)
 
-        for ingredient in ingredients:
-            amount = ingredient['amount']
-            ingredient = get_object_or_404(Ingredients, pk=ingredient['id'])
-
-            RecipesIngredients.objects.create(
-                ingredient_id=ingredient,
-                amount=amount,
-                recipe_id=recipe)
+        RecipesIngredients.objects.bulk_create([RecipesIngredients(
+            ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
+            amount=ingredient['amount'],
+            recipe_id=recipe,
+            ) for ingredient in ingredients]
+        )
 
         return recipe
 
