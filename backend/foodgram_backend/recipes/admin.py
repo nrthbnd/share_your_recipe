@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import display
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
 from .models import Ingredients, Recipes, ShoppingList, Tags
 
@@ -9,8 +11,14 @@ class RecipesIngredientsInline(admin.TabularInline):
     fields = ('amount', 'ingredients')
 
 
-@admin.register(Ingredients)
-class IngredientsAdmin(admin.ModelAdmin):
+class IngredientResource(resources.ModelResource):
+    """Испорт данных из файла."""
+    class Meta:
+        model = Ingredients
+
+
+class IngredientsAdmin(ImportExportModelAdmin):
+    resource_class = IngredientResource
     list_display = (
         'name',
         'measurement_unit',
@@ -19,6 +27,9 @@ class IngredientsAdmin(admin.ModelAdmin):
         'name',
     )
     inlines = (RecipesIngredientsInline,)
+
+
+admin.site.register(Ingredients, IngredientsAdmin)
 
 
 @admin.register(Tags)
