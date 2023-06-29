@@ -111,7 +111,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
                 'Необходимо добавить ингридиент.')
 
         ingredients = [ingredient['id'] for ingredient in value]
-        if len(ingredients) != set(len(ingredients)):
+        if len(ingredients) != len(set(ingredients)):
             raise exceptions.ValidationError(
                 'Этот ингредиент уже добавлен в рецепт.')
         return value
