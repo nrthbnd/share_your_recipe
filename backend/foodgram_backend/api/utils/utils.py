@@ -10,8 +10,8 @@ def create_shopping_list_file(user):
     if not user.shopping_cart.exists():
         return None
 
-    products = ShoppingList.objects.filter(user=user)
-    recipes_list = [product.recipe_id for product in products]
+    recipes_list = ShoppingList.objects.filter(
+        user=user).values_list('recipe_id', flat=True)
 
     shopping_list = RecipesIngredients.objects.filter(
         recipe_id__in=recipes_list
