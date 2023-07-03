@@ -3,6 +3,7 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
+from django.core.validators import MinValueValidator
 from rest_framework import exceptions, serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -21,7 +22,11 @@ class IngredientsSerializer(serializers.ModelSerializer):
 class RecipesIngredientsSerializer(serializers.Serializer):
     """Получение объекта amount таблицы RecipesIngredients."""
     id = serializers.IntegerField(write_only=True)
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(
+        validators=(
+            MinValueValidator, 1,
+            'Количество ингридиента должно быть не менее 1.')
+    )
 
     class Meta:
         model = RecipesIngredients
@@ -72,23 +77,21 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         return Favorites.objects.filter(
             user=user, recipe_id=obj.id).exists()
 
-    def get_ingredients(self, obj):
+    def get_ingredients(self, recipe):
         """Получает значения полей из модели Ингредиентов
         и значение amount из общей таблицы RecipesIngredients."""
-        recipe = obj
         ingredients = recipe.ingredients.values(
             'id', 'name', 'measurement_unit',
             amount=F('recipesingredients__amount')
         )
         return ingredients
 
-    def get_shopping_cart(self, obj):
+    def get_shopping_cart(self, recipe):
         """Возвращает True/False о добавлении в состав корзины для
         пользователя, отправляющего запрос."""
         user = self.context['request'].user
-        recipe = obj.id
         return ShoppingList.objects.filter(
-            user=user, recipe_id=recipe).exists()
+            user=user, recipe_id=recipe.id).exists()
 
 
 class RecipesWriteSerializer(serializers.ModelSerializer):
@@ -98,6 +101,11 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         queryset=Tags.objects.all(), many=True)
     image = CustomImageField()
     author = CustomUserSerializer(read_only=True,)
+    cooking_time = serializers.IntegerField(
+        validators=(
+            MinValueValidator, 1,
+            'Время приготовления блюда должно быть не менее минуты.')
+    )
 
     class Meta:
         model = Recipes
@@ -105,13 +113,13 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
                   'cooking_time', 'author')
 
     def validate_ingredients(self, value):
-        """Проверка создания ингридиентов."""
+        """Проверка создания ингредиентов."""
         if not value:
             raise exceptions.ValidationError(
-                'Необходимо добавить ингридиент.')
+                'Необходимо добавить ингредиент.')
 
-        ingredients = [ingredient['id'] for ingredient in value]
-        if len(ingredients) != len(set(ingredients)):
+        ingredients = set(ingredient['id'] for ingredient in value)
+        if len(value) != len(ingredients):
             raise exceptions.ValidationError(
                 'Этот ингредиент уже добавлен в рецепт.')
         return value
@@ -125,7 +133,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Создает рецепт и добавляет в связанные модели рецептов
-        и ингридиентов, рецептов и тегов новые поля."""
+        и ингредиентов, рецептов и тегов новые поля."""
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipes.objects.create(**validated_data)
@@ -140,7 +148,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        """Проверяет, есть ли в модели объект ингридиентов и тегов
+        """Проверяет, есть ли в модели объект ингредиентов и тегов
         и заменяет их."""
         if 'ingredients' in validated_data:
             instance.ingredients.clear()
