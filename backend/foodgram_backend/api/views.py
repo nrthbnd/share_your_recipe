@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .utils.utils import create_shopping_list_file
@@ -40,7 +40,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, partial=False)
 
     @action(detail=True, methods=['post', 'delete'],
-            permission_classes=(IsAuthorOrAdminOrReadOnly,))
+            permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk=None):
         """Проверяет, добавлен ли рецепт в избранное
         и добавляет/удаляет его."""
@@ -76,7 +76,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=True, methods=['post', 'delete'],
-            permission_classes=(IsAuthorOrAdminOrReadOnly,))
+            permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk=None):
         """Проверяет, добавлен ли рецепт в список покупок
         и добавляет/удаляет его."""
@@ -115,7 +115,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=False, methods=['get', ],
-            permission_classes=(IsAuthorOrAdminOrReadOnly,),
+            permission_classes=(IsAuthenticated,),
             url_path='download_shopping_cart')
     def download_shopping_cart(self, request):
         """Создание списка покупок."""
@@ -132,7 +132,7 @@ class IngredientsViewSet(viewsets.ModelViewSet):
     """Список ингредиентов."""
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    permission_classes = (AllowAny,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = IngredientsFilter
@@ -143,6 +143,7 @@ class TagsViewSet(viewsets.ModelViewSet):
     """Список тегов длфя рецептов."""
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
+    permission_classes = (AllowAny,)
     pagination_class = None
 
 

@@ -52,7 +52,8 @@ class TagsSerializer(serializers.ModelSerializer):
 class RecipesReadSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра рецептов."""
     tags = TagsSerializer(many=True)
-    author = CustomUserSerializer()
+    # author = CustomUserSerializer()
+    author = SerializerMethodField(method_name='get_author')
     is_favorited = SerializerMethodField(method_name='get_favorited')
     ingredients = SerializerMethodField(method_name='get_ingredients')
     is_in_shopping_cart = SerializerMethodField(
@@ -66,10 +67,17 @@ class RecipesReadSerializer(serializers.ModelSerializer):
                   'cooking_time')
         read_only_fields = ('__all__',)
 
+    def get_author(self, obj):
+        request = self.context['request']
+        return CustomUserSerializer(
+            obj.author, context={'request': request}).data
+
     def get_favorited(self, obj):
         """Возвращает True/False об Избранном для пользователя,
         отправляющего запрос."""
         user = self.context['request'].user
+        if not user.is_authenticated:
+            return False
         return Favorites.objects.filter(
             user=user, recipe_id=obj.id).exists()
 
@@ -86,6 +94,8 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         """Возвращает True/False о добавлении в состав корзины для
         пользователя, отправляющего запрос."""
         user = self.context['request'].user
+        if not user.is_authenticated:
+            return False
         return ShoppingList.objects.filter(
             user=user, recipe_id=obj.id).exists()
 
