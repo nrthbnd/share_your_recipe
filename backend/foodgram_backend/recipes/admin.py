@@ -20,6 +20,7 @@ class IngredientResource(resources.ModelResource):
 class IngredientsAdmin(ImportExportModelAdmin):
     resource_class = IngredientResource
     list_display = (
+        'id',
         'name',
         'measurement_unit',
     )
