@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from django.core.validators import MinValueValidator
 from rest_framework import exceptions, serializers
 from rest_framework.fields import SerializerMethodField
 
