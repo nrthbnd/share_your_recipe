@@ -1,9 +1,9 @@
 import base64
 
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.models import F
-# from django.shortcuts import get_object_or_404
-from django.core.validators import MinValueValidator
+from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -22,11 +22,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
 class RecipesIngredientsSerializer(serializers.Serializer):
     """Получение объекта amount таблицы RecipesIngredients."""
     id = serializers.IntegerField(write_only=True)
-    amount = serializers.IntegerField(
-        validators=(
-            MinValueValidator, 1,
-            'Количество ингридиента должно быть не менее 1.')
-    )
+    amount = serializers.IntegerField()
 
     class Meta:
         model = RecipesIngredients
@@ -101,11 +97,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         queryset=Tags.objects.all(), many=True)
     image = CustomImageField()
     author = CustomUserSerializer(read_only=True,)
-    cooking_time = serializers.IntegerField(
-        validators=(
-            MinValueValidator, 1,
-            'Время приготовления блюда должно быть не менее минуты.')
-    )
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipes
@@ -118,10 +110,15 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
             raise exceptions.ValidationError(
                 'Необходимо добавить ингредиент.')
 
-        ingredients = set(ingredient['id'] for ingredient in value)
+        ingredients = set([ingredient['id'] for ingredient in value])
         if len(value) != len(ingredients):
             raise exceptions.ValidationError(
                 'Этот ингредиент уже добавлен в рецепт.')
+        for ingredient in value:
+            if ingredient['amount'] < settings.MIN_AMOUNT:
+                raise serializers.ValidationError(
+                    'Количество ингредиента не может быть менее '
+                    f'{settings.MIN_AMOUNT}.')
         return value
 
     def validate_tags(self, value):
@@ -131,18 +128,28 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
                 'Необходимо добавить тег.')
         return value
 
+    def validate_cooking_time(self, value):
+        """Проверка времени приготовления блюда."""
+        if not value:
+            raise exceptions.ValidationError(
+                'Необходимо добавить время приготовления.')
+
+        if value < settings.MIN_COOK_TIME:
+            raise exceptions.ValidationError(
+                'Время приготовления блюда не может быть менее '
+                f'{settings.MIN_COOK_TIME} (мин).')
+        return value
+
     def create(self, validated_data):
         """Создает рецепт и добавляет в связанные модели рецептов
         и ингредиентов, рецептов и тегов новые поля."""
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipes.objects.create(**validated_data)
-        recipe.save()
         recipe.tags.set(tags)
 
         RecipesIngredients.objects.bulk_create([RecipesIngredients(
-            # ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
-            ingredient_id=ingredient['id'],
+            ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
             amount=ingredient['amount'],
             recipe_id=recipe,
         ) for ingredient in ingredients])
