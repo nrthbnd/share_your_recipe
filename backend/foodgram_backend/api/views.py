@@ -103,7 +103,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 recipe_id=recipe,
                 user=user
             ).exists():
-
                 raise exceptions.ValidationError(
                     'Рецепта нет в списке покупок!'
                 )
