@@ -118,7 +118,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
             raise exceptions.ValidationError(
                 'Необходимо добавить ингредиент.')
 
-        ingredients = set(ingredient['id'] for ingredient in value)
+        ingredients = set([ingredient['id'] for ingredient in value])
         if len(value) != len(ingredients):
             raise exceptions.ValidationError(
                 'Этот ингредиент уже добавлен в рецепт.')
@@ -137,7 +137,6 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipes.objects.create(**validated_data)
-        recipe.save()
         recipe.tags.set(tags)
 
         RecipesIngredients.objects.bulk_create([RecipesIngredients(
