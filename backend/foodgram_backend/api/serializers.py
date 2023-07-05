@@ -1,5 +1,6 @@
 import base64
 
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
@@ -23,10 +24,6 @@ class RecipesIngredientsSerializer(serializers.Serializer):
     """Получение объекта amount таблицы RecipesIngredients."""
     id = serializers.IntegerField(write_only=True)
     amount = serializers.IntegerField()
-    #     validators=(
-    #         MinValueValidator, 1,
-    #         'Количество ингридиента должно быть не менее 1.')
-    # )
 
     class Meta:
         model = RecipesIngredients
@@ -118,6 +115,11 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         if len(value) != len(ingredients):
             raise exceptions.ValidationError(
                 'Этот ингредиент уже добавлен в рецепт.')
+        for ingredient in value:
+            if ingredient['amount'] < settings.MIN_AMOUNT:
+                raise serializers.ValidationError(
+                    'Количество ингредиента не может быть менее '
+                    f'{settings.MIN_AMOUNT}.')
         return value
 
     def validate_tags(self, value):
@@ -133,9 +135,10 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
             raise exceptions.ValidationError(
                 'Необходимо добавить время приготовления.')
 
-        if value < 1:
+        if value < settings.MIN_COOK_TIME:
             raise exceptions.ValidationError(
-                'Время приготовления блюда не может быть менее минуты.')
+                'Время приготовления блюда не может быть менее '
+                f'{settings.MIN_COOK_TIME} (мин).')
         return value
 
     def create(self, validated_data):
