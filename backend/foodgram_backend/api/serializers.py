@@ -77,21 +77,21 @@ class RecipesReadSerializer(serializers.ModelSerializer):
         return Favorites.objects.filter(
             user=user, recipe_id=obj.id).exists()
 
-    def get_ingredients(self, recipe):
+    def get_ingredients(self, obj):
         """Получает значения полей из модели Ингредиентов
         и значение amount из общей таблицы RecipesIngredients."""
-        ingredients = recipe.ingredients.values(
+        ingredients = obj.ingredients.values(
             'id', 'name', 'measurement_unit',
             amount=F('recipesingredients__amount')
         )
         return ingredients
 
-    def get_shopping_cart(self, recipe):
+    def get_shopping_cart(self, obj):
         """Возвращает True/False о добавлении в состав корзины для
         пользователя, отправляющего запрос."""
         user = self.context['request'].user
         return ShoppingList.objects.filter(
-            user=user, recipe_id=recipe.id).exists()
+            user=user, recipe_id=obj.id).exists()
 
 
 class RecipesWriteSerializer(serializers.ModelSerializer):
@@ -137,10 +137,12 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipes.objects.create(**validated_data)
+        recipe.save()
         recipe.tags.set(tags)
 
         RecipesIngredients.objects.bulk_create([RecipesIngredients(
-            ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
+            # ingredient_id=get_object_or_404(Ingredients, pk=ingredient['id']),
+            ingredient_id=ingredient['id'],
             amount=ingredient['amount'],
             recipe_id=recipe,
         ) for ingredient in ingredients])
