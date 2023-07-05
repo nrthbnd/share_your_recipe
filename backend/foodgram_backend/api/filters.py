@@ -1,4 +1,3 @@
-import django_filters
 from django_filters import rest_framework as filters
 
 from recipes.models import Ingredients, Recipes, Tags
@@ -22,22 +21,25 @@ class RecipesFilter(filters.FilterSet):
         to_field_name='slug',
         queryset=Tags.objects.all()
     )
-    is_favorited = django_filters.BooleanFilter(
+
+    is_favorited = filters.BooleanFilter(
         field_name='favorite_recipes',
         method='filter_favorites'
     )
-    is_in_shopping_cart = django_filters.BooleanFilter(
+
+    is_in_shopping_cart = filters.BooleanFilter(
         field_name='shopping_cart',
         method='filter_shopping_cart'
     )
 
     class Meta:
         model = Recipes
-        fields = ('tags', 'author',)
+        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
     def filter_favorites(self, queryset, name, value):
-        return queryset.filter(
-            favorites__user=self.request.user) if value else queryset
+        return (queryset.filter(
+            in_favorites__user=self.request.user) if (
+            value and self.request.user.is_authenticated) else queryset)
 
     def filter_shopping_cart(self, queryset, name, value):
         return queryset.filter(
