@@ -134,6 +134,7 @@ class IngredientsViewSet(viewsets.ModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    pagination_class = None
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = IngredientsFilter
     search_fields = ('name',)
@@ -143,6 +144,7 @@ class TagsViewSet(viewsets.ModelViewSet):
     """Список тегов длфя рецептов."""
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
+    pagination_class = None
 
 
 class RecipesInCartViewSet(viewsets.ModelViewSet):
