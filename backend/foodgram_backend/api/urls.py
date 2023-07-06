@@ -7,14 +7,14 @@ from .views import (IngredientsViewSet, RecipesInCartViewSet, RecipesViewSet,
 app_name = 'api'
 router = DefaultRouter()
 
-router.register('tags', TagsViewSet)
-router.register('recipes', RecipesViewSet)
+router.register(r'tags', TagsViewSet, basename='tags')
+router.register(r'recipes', RecipesViewSet, basename='recipes')
 router.register(
     r'recipes/(?P<recipe_id>\d+)/shopping_cart',
     RecipesInCartViewSet,
     basename='shopping_cart',
 )
-router.register('ingredients', IngredientsViewSet)
+router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
 
 urlpatterns = [
     path('', include(router.urls)),
