@@ -8,11 +8,11 @@ app_name = 'users'
 router = DefaultRouter()
 
 router.register(
-    r'users/subscriptions',
+    'users/subscriptions',
     FollowViewSet,
     basename='subscriptions')
 
-router.register(r'users', CustomUserViewSet, basename='users')
+router.register('users', CustomUserViewSet, basename='users')
 
 urlpatterns = [
     path('', include(router.urls)),
