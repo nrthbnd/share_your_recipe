@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .utils.utils import create_shopping_list_file
+from .utils.utils import create_shopping_cart_file
 from recipes.models import (Favorites, Ingredients, Recipes,
                             ShoppingList, Tags)
 from .filters import IngredientsFilter, RecipesFilter
@@ -120,7 +120,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         """Создание списка покупок."""
         user = request.user
-        response = create_shopping_list_file(user)
+        response = create_shopping_cart_file(user)
 
         if response is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -151,3 +151,4 @@ class RecipesInCartViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesMajorSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    pagination_class = None
