@@ -4,7 +4,7 @@ from django.db.models import Sum
 from recipes.models import ShoppingList, RecipesIngredients
 
 
-def create_shopping_list_file(user):
+def create_shopping_cart_file(user):
     """Создает файл с суммированным перечнем и количеством
     необходимых ингредиентов."""
     if not user.shopping_cart.exists():
@@ -27,7 +27,7 @@ def create_shopping_list_file(user):
 
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = (
-        'attachment; filename="shopping_list.txt"')
+        'attachment; filename="shopping_cart.txt"')
     response.write(content)
 
     return response
