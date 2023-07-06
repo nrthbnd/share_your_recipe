@@ -36,7 +36,7 @@ class CustomUserSerializer(UserSerializer):
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализатор для подписки на автора рецепта."""
     is_subscribed = SerializerMethodField(
-        method_name='get_subscription)
+        method_name='get_subscription')
     recipes = SerializerMethodField(
         method_name='get_recipes')
     recipes_count = SerializerMethodField(
