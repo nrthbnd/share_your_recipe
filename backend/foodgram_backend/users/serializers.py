@@ -16,29 +16,27 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class CustomUserSerializer(UserSerializer):
-    """Получает поля пользователя (SAFE_METHODS)."""
+    """Сериалайзер для получени информации о пользователях."""
     is_subscribed = SerializerMethodField(
         method_name='get_subscription')
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name',
-                  'last_name', 'is_subscribed',)
-        read_only_fields = ('id', 'is_subscribed',)
+        fields = ("email", "id", "username",
+                  "first_name", "last_name",
+                  "is_subscribed")
 
     def get_subscription(self, obj):
-        """Возвращает True/False о подписке на автора рецепта
-        пользователя, отправляющего запрос."""
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=user, author=obj).exists()
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return Follow.objects.filter(user=user, author=obj).exists()
+        return False
 
 
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализатор для подписки на автора рецепта."""
     is_subscribed = SerializerMethodField(
-        method_name='get_is_subscribed')
+        method_name='get_subscription)
     recipes = SerializerMethodField(
         method_name='get_recipes')
     recipes_count = SerializerMethodField(
@@ -75,13 +73,13 @@ class FollowSerializer(serializers.ModelSerializer):
         from api.serializers import RecipesMajorSerializer
         return RecipesMajorSerializer
 
-    def get_is_subscribed(self, obj):
+    def get_subscription(self, obj):
         """Возвращает True/False о подписке на автора рецепта
         пользователя, отправляющего запрос."""
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=user, author=obj).exists()
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return Follow.objects.filter(user=user, author=obj).exists()
+        return False
 
     def get_recipes(self, obj):
         """Получает рецепты автора, на которого оформлена подписка
