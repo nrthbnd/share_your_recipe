@@ -8,13 +8,13 @@ from rest_framework.response import Response
 from api.pagination import PageLimitPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import Follow, User
-from users.serializers import CustomUserCreateSerializer, FollowSerializer
+from users.serializers import CustomUserSerializer, FollowSerializer
 
 
 class CustomUserViewSet(UserViewSet):
     """Создание пользователя и подписка на него."""
     queryset = User.objects.all()
-    serializer_class = CustomUserCreateSerializer
+    serializer_class = CustomUserSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = PageLimitPagination
 
