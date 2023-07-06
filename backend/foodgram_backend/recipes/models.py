@@ -204,13 +204,13 @@ class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_list',
+        related_name='shopping_cart',
         verbose_name='Пользователь',
     )
     recipe_id = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='in_shopping_list',
+        related_name='in_shopping_cart',
         verbose_name='id рецепта',
     )
 
@@ -224,6 +224,6 @@ class ShoppingList(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe_id', 'user'],
-                name='unique_shopping_list',
+                name='unique_shopping_cart',
             )
         ]
