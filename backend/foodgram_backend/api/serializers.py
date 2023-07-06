@@ -168,19 +168,26 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Проверяет, есть ли в модели объект ингредиентов и тегов
-        и заменяет их."""
-        if 'ingredients' in validated_data:
-            instance.ingredients.clear()
-            ingredients = validated_data.pop('ingredients')
-        if 'tags' in validated_data:
-            instance.tags.clear()
-            tags = validated_data.pop('tags')
+        и заменяет их, если запрос от автора рецепта."""
+        tags = validated_data.pop('tags', None)
+        if tags is not None:
+            instance.tags.set(tags)
 
-        instance = super().update(instance, validated_data)
-        return self.add_ingredient_and_tag_in_recipe(
-            instance,
-            ingredients=ingredients,
-            tags=tags)
+        ingredients = validated_data.pop('ingredients', None)
+        if ingredients is not None:
+            instance.ingredients.clear()
+
+            for ingredient in ingredients:
+                amount = ingredient['amount']
+                ingredient = get_object_or_404(
+                    Ingredients, pk=ingredient['id'])
+
+                RecipesIngredients.objects.update_or_create(
+                    recipe_id=instance,
+                    ingredient_id=ingredient,
+                    defaults={'amount': amount}
+                )
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         """Преобразует объект модели в словарь. Создает экземпляр
