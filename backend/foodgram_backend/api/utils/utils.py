@@ -15,13 +15,13 @@ def create_shopping_cart_file(user):
 
     shopping_list = RecipesIngredients.objects.filter(
         recipe_id__in=recipes_list
-    ).values('ingredient__name',
-             'ingredient__measurement_unit'
+    ).values('ingredient_id__name',
+             'ingredient_id__measurement_unit'
              ).annotate(total_amount=Sum('amount'))
 
     content = 'Ваш список покупок:\n\n'
     for item in shopping_list:
-        name = item['ingredient__name']
+        name = item['ingredient_id__name']
         amount = item['total_amount']
         content += f'{name}: {amount}\n'
 
