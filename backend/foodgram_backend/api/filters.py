@@ -16,7 +16,7 @@ class IngredientsFilter(filters.FilterSet):
 
 class RecipesFilter(filters.FilterSet):
     """Определяет фильтры для рецептов:
-    по тегам, по избранному, по списку покупок."""
+    по тегам, автору, по избранному, по списку покупок."""
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
