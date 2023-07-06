@@ -168,8 +168,8 @@ DJOSER = {
     'USER_ID_FIELD': 'id',
 }
 
-MIN_COOK_TIME = 1
 MIN_AMOUNT = 1
+MIN_COOK_TIME = 1
 
 LOGGING = {
     "version": 1,
