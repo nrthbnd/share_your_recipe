@@ -1,10 +1,10 @@
 # Foofgram
 
-## Онлайн-сервис для публикации рецептов
+## Онлайн-сервис для публикации рецептов доступен по адресу: [nrthbnd.serveminecraft.net](https://nrthbnd.serveminecraft.net/)
 
 ### Автор:
 
-- [Анастасия Боль · GitHub](https://github.com/nrthbnd)
+- [Анастасия Боль](https://github.com/nrthbnd)
 
 ### Технологии:
 
