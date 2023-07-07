@@ -14,7 +14,7 @@ DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['*']
 # CSRF_TRUSTED_ORIGINS = ['http://localhost']
-CSRF_TRUSTED_ORIGINS = ['http://nrthbnd.serveminecraft.net']
+CSRF_TRUSTED_ORIGINS = ['https://nrthbnd.serveminecraft.net']
 
 
 # Application definition
