@@ -14,9 +14,7 @@ services:
 
   backend:
     container_name: foodgram_backend
-    build:
-      context: ../backend/foodgram_backend/
-      dockerfile: Dockerfile
+    image: nrthbnd/foodgram_backend
     restart: always
     volumes:
       - static_value:/app/static/
@@ -28,10 +26,8 @@ services:
       - ./.env
 
   frontend:
-    build:
-      container_name: foodgram_frontend
-      context: ../frontend
-      dockerfile: Dockerfile
+    container_name: foodgram_frontend
+    image: nrthbnd/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
 
@@ -48,6 +44,7 @@ services:
       - redoc:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
+      - frontend
     restart: always
     env_file:
       - ./.env
