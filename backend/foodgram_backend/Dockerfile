@@ -7,9 +7,6 @@ COPY requirements.txt ./
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt --no-cache-dir
 
-# COPY backend/foodgram_backend/ ./
 COPY . .
 
-RUN chmod +x run_app.sh
-ENTRYPOINT ["/app/run_app.sh"]
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram_backend.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram_backend.wsgi"]
