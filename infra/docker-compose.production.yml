@@ -4,7 +4,6 @@ name: foodgram-project
 services:
 
   db:
-    container_name: foodgram_db
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -13,8 +12,7 @@ services:
       - ./.env
 
   backend:
-    container_name: foodgram_backend
-    image: nrthbnd/backend
+    image: nrthbnd/foodgram_backend
     restart: always
     volumes:
       - static_value:/app/static/
@@ -26,13 +24,11 @@ services:
       - ./.env
 
   frontend:
-    container_name: foodgram_frontend
-    image: nrthbnd/frontend
+    image: nrthbnd/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
 
   nginx:
-    container_name: foodgram_gateway
     image: nginx:1.19.3
     ports:
       - "80:80"
