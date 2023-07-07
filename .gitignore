@@ -134,3 +134,4 @@ dmypy.json
 
 # folders
 backend/foodgram_backend/recipes/images
+.vscode
