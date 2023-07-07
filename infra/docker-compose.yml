@@ -13,7 +13,6 @@ services:
       - ./.env
 
   backend:
-    container_name: foodgram_backend
     build:
       context: ../backend/foodgram_backend/
       dockerfile: Dockerfile
@@ -29,14 +28,12 @@ services:
 
   frontend:
     build:
-      container_name: foodgram_frontend
       context: ../frontend
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
 
   nginx:
-    container_name: foodgram_gateway
     image: nginx:1.19.3
     ports:
       - "80:80"
