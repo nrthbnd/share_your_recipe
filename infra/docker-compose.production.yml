@@ -14,7 +14,7 @@ services:
 
   backend:
     container_name: foodgram_backend
-    image: nrthbnd/foodgram_backend
+    image: nrthbnd/backend
     restart: always
     volumes:
       - static_value:/app/static/
@@ -27,7 +27,7 @@ services:
 
   frontend:
     container_name: foodgram_frontend
-    image: nrthbnd/foodgram_frontend
+    image: nrthbnd/frontend
     volumes:
       - ../frontend/:/app/result_build/
 
