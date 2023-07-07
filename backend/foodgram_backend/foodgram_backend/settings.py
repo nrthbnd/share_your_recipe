@@ -14,7 +14,7 @@ DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['*']
 # CSRF_TRUSTED_ORIGINS = ['http://localhost']
-CSRF_TRUSTED_ORIGINS = ['http://nrthbnd.serveminecraft.net']
+CSRF_TRUSTED_ORIGINS = ['https://nrthbnd.serveminecraft.net']
 
 
 # Application definition
@@ -74,12 +74,6 @@ WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db_foodgram.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
