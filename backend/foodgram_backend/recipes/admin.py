@@ -10,8 +10,6 @@ from .models import (Ingredients, Recipes, RecipesIngredients,
 
 class RecipesIngredientsInline(admin.TabularInline):
     model = RecipesIngredients
-    # model = Recipes.ingredients.through
-    # fields = ('amount', 'ingredients')
 
 
 class IngredientResource(resources.ModelResource):
@@ -29,7 +27,6 @@ class IngredientsAdmin(ImportExportModelAdmin):
     )
     search_fields = ('name',)
     list_filter = ('name',)
-    # inlines = (RecipesIngredientsInline,)
     empty_value_display = settings.EMPTY_VALUE
 
 
