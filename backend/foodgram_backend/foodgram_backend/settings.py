@@ -167,6 +167,7 @@ DJOSER = {
 
 MIN_AMOUNT = 1
 MIN_COOK_TIME = 1
+EMPTY_VALUE = '-пусто-'
 
 LOGGING = {
     "version": 1,

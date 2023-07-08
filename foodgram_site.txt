@@ -1,0 +1,5 @@
+IP: 130.193.55.180;
+name_foodgram: https://nrthbnd.serveminecraft.net/;
+
+login: newadminuser;
+password: iamnewadmin;
