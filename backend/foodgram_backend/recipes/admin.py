@@ -5,11 +5,15 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
 from .models import (Ingredients, Recipes, RecipesIngredients,
-                     ShoppingList, Tags)
+                     RecipesTags, ShoppingList, Tags)
 
 
 class RecipesIngredientsInline(admin.TabularInline):
     model = RecipesIngredients
+
+
+class RecipesTagsInline(admin.TabularInline):
+    model = RecipesTags
 
 
 class IngredientResource(resources.ModelResource):
@@ -62,7 +66,7 @@ class RecipesAdmin(admin.ModelAdmin):
     readonly_fields = (
         'in_favorites',
     )
-    inlines = (RecipesIngredientsInline,)
+    inlines = (RecipesIngredientsInline, RecipesTagsInline,)
     empty_value_display = settings.EMPTY_VALUE
 
     @display(description='Сколько в избранных')
