@@ -100,14 +100,12 @@ class Recipes(models.Model):
     ingredients = models.ManyToManyField(
         Ingredients,
         through='RecipesIngredients',
-        blank=True,
         verbose_name='Ингредиент',
         related_name='recepies',
     )
     tags = models.ManyToManyField(
         Tags,
         through='RecipesTags',
-        blank=True,
         verbose_name='Тег',
         related_name='recepies',
     )
@@ -149,7 +147,7 @@ class RecipesIngredients(models.Model):
 
 
 class RecipesTags(models.Model):
-    """В этой модели всязываются рецепты и теги."""
+    """В этой модели связываются рецепты и теги."""
     recipe_id = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
