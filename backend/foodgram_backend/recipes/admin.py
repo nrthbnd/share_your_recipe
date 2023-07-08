@@ -1,14 +1,17 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import display
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Ingredients, Recipes, ShoppingList, Tags
+from .models import (Ingredients, Recipes, RecipesIngredients,
+                     ShoppingList, Tags)
 
 
 class RecipesIngredientsInline(admin.TabularInline):
-    model = Recipes.ingredients.through
-    fields = ('amount', 'ingredients')
+    model = RecipesIngredients
+    # model = Recipes.ingredients.through
+    # fields = ('amount', 'ingredients')
 
 
 class IngredientResource(resources.ModelResource):
@@ -24,10 +27,10 @@ class IngredientsAdmin(ImportExportModelAdmin):
         'name',
         'measurement_unit',
     )
-    list_filter = (
-        'name',
-    )
-    inlines = (RecipesIngredientsInline,)
+    search_fields = ('name',)
+    list_filter = ('name',)
+    # inlines = (RecipesIngredientsInline,)
+    empty_value_display = settings.EMPTY_VALUE
 
 
 admin.site.register(Ingredients, IngredientsAdmin)
@@ -36,10 +39,14 @@ admin.site.register(Ingredients, IngredientsAdmin)
 @admin.register(Tags)
 class TagsAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'name',
         'slug',
         'color',
     )
+    search_fields = ('name', 'slug', 'color')
+    list_filter = ('name', 'slug', 'color')
+    empty_value_display = settings.EMPTY_VALUE
 
 
 @admin.register(Recipes)
@@ -58,15 +65,30 @@ class RecipesAdmin(admin.ModelAdmin):
     readonly_fields = (
         'in_favorites',
     )
+    inlines = (RecipesIngredientsInline,)
+    empty_value_display = settings.EMPTY_VALUE
 
     @display(description='Сколько в избранных')
     def in_favorites(self, obj):
         return obj.in_favorites.count()
 
 
+@admin.register(RecipesIngredients)
+class RecipesIngredientsAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'recipe_id',
+        'ingredient_id',
+        'amount',
+    )
+    empty_value_display = settings.EMPTY_VALUE
+
+
 @admin.register(ShoppingList)
 class ShoppingListsAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'user',
         'recipe_id',
     )
+    empty_value_display = settings.EMPTY_VALUE
