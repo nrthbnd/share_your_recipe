@@ -1,4 +1,4 @@
-# Foofgram
+# Share_your_recipe
 
 ## Онлайн-сервис для публикации рецептов доступен по адресу: [nrthbnd.serveminecraft.net](https://nrthbnd.serveminecraft.net/)
 
@@ -26,7 +26,7 @@ http://localhost:8000/redoc/
 
 Клонировать репозиторий и перейти в него в командной строке:
 ```
-git clone git@github.com:nrthbnd/foodgram-project-react.git
+git clone https://github.com/nrthbnd/share_your_recipe.git
 ```
 
 Cоздать и активировать виртуальное окружение:
